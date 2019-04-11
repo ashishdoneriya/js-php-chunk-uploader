@@ -8,7 +8,7 @@ $target_file = $target_path.$filename;
 $num = $_POST['num'];
 $num_chunks = $_POST['num_chunks'];
 if (!file_exists($target_path)) {
-    mkdir($lockPath, 0777, true);
+    mkdir($target_path, 0777, true);
 }
 move_uploaded_file($tmp_name, $target_file.$num);
 
@@ -24,8 +24,7 @@ while (true) {
 	if ($lock == 1) {
 		break;
 	}
-
-	sleep(10);
+	sleep(mt_rand(10, 50));
 }
 
 $uploadedChunks = updateAndGetChunksUploaded($chunksUploadedPath);
@@ -70,23 +69,8 @@ if ($serialNumber == 0) {
 // and THAT's what you were asking for
 // when this triggers - that means your chunks are uploaded
 if ($uploadedChunks == $num_chunks) {
-	$i = $serialNumber + 1;
-	$final = fopen($target_file.'1', 'ab');
-	for (; $i <= $uploadedChunks; $i++) {
-		if (!file_exists($target_file.$i)) {
-			break;
-		}
-		$file = fopen($target_file.$i, 'rb');
-		$buff = fread($file, filesize($target_file.$i));
-		fclose($file);
-		$write = fwrite($final, $buff);
-		unlink($target_file.$i);
-	}
-	fclose($final);
-	setSerialNumber($i - 1);
 	rename($target_file.'1', $target_file );
 	rrmdir($target_path . 'temp/'. $filename);
-
 }
 
 if (file_exists($lockPath)) {
@@ -121,7 +105,9 @@ function updateAndGetChunksUploaded($path) {
 
 function setSerialNumber($serialNumber) {
 	global $serialNumPath;
-	unlink($serialNumPath);
+	if (file_exists($serialNumPath)) {
+		unlink($serialNumPath);
+	}
 	$myfile = fopen($serialNumPath, "w");
 	fwrite($myfile, (string) $serialNumber);
 	fclose($myfile);
