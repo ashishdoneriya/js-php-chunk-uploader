@@ -1,6 +1,6 @@
 <?php
 
-$target_path = '/home/ashish/projects/js-php-chunk-uploader-master/upload/';
+$target_path = '/home/impadmin/projects/js-php-chunk-uploader-master/upload/';
 
 $tmp_name = $_FILES['upload']['tmp_name'];
 $filename = $_FILES['upload']['name'];

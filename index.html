@@ -102,10 +102,7 @@
 					},
 					createFileInfoObject(file) {
 						let size = file.size;
-						let bytesPerChunk = parseInt(2097152, 10);
-						if (size > this.threads * 200 * 1024 && size < this.threads * 8 * 1024 * 1024) {
-							bytesPerChunk = parseInt(bytesPerChunk / this.threads, 10);
-						}
+						let bytesPerChunk = 1024 * 1024;
 						let totalNoOfChunks = Math.max(Math.ceil(size / bytesPerChunk), 1);
 
 						return {
